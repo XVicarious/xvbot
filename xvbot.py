@@ -49,6 +49,10 @@ async def reboot():
 async def c(ctx):
   print(ctx)
 
+@bot.event
+async def on_message(message):
+    await bot.say("...")
+
 def reboot_self():
   bot.change_presence(status = discord.Status.offline)
   __soft_close()
