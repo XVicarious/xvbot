@@ -1,84 +1,83 @@
 import discord
-from discord.ext import commands
-import httplib2, psutil, os, sys
-from watchdog import observers, events
+import asyncio
+import re
+import json
+from pathlib import Path
 
-class ModifiedHandler(events.FileSystemEventHandler):
-  def on_modified(self, event):
-    if (event.src_path[2:] == __file__):
-      reboot_self()
+client = discord.Client()
 
-modified_handler = ModifiedHandler()
-sObserver = observers.Observer()
-sObserver.schedule(modified_handler, './', recursive=False)
-sObserver.start()
+TOKEN = ""
 
-description = ''' XVBot does things. '''
+def openMemes(filePath):
+    if not filePath.exists():
+        f = open(filePath, 'w+')
+        f.write("{}")
+        f.close()
+    return json.load(open(filePath))
 
-bot = commands.Bot(command_prefix='xv:', description=description)
+LANGUAGE = "en_US"
+STRINGS = openMemes(Path("./lang.json"))
 
-gateway = "https://gateway.xvicario.us"
+NEW_MEME_COMMAND = "CHECK OUT THIS FRESH MEME CALLED "
+LIST_MEMES_COMMAND = "WHAT ARE THE MEMES?"
+HELP_COMMAND = "HOW DO I USE THIS FUCKING BOT!?"
 
-token = open('client.id.cfg', 'r').readline().strip()
+CALL_MEME_REGEX = re.compile("(?<=\;)(.*?)(?=\;)")
+VALID_MEME_REGEX = re.compile(".*[.\\\\/:*?\"<>|].*")
 
-@bot.event
+MEMES_FILE = Path("./memes.json")
+MEMES_LIST = openMemes(MEMES_FILE)
+
+TRIAL_ONGOING = False
+TRIAL_FOR_MEME = {
+    "meme": "",
+    "date": 0
+}
+
+@client.event
 async def on_ready():
-  print('Logged in as')
-  print(bot.user.name)
-  print(bot.user.id)
-  print('------------')
-  await bot.change_presence(game = discord.Game(name="The Game of Life", url="https://reddit.com/r/outside"))
+    print("Logged in as")
+    print(client.user.name)
+    print(client.user.id)
+    print("------------")
 
-@bot.command()
-async def check(service : str):
-  code = __get_status_code(gateway, "/" + service)
-  if (code == 404):
-    await bot.say((service[0].upper() + service[1:]) + " is down.")
-    return
-  await bot.say((service[0].upper() + service[1:]) + " seems to be fine.")
-
-@bot.command()
-async def end():
-  await bot.close()
-
-@bot.command()
-async def reboot():
-  await reboot_self()
-
-@bot.command(pass_context=True)
-async def c(ctx):
-  print(ctx)
-
-@bot.event
+@client.event
 async def on_message(message):
-    await bot.say("...")
+    message_sender = "<@" + message.author.id + ">"
+    if message.content.startswith(NEW_MEME_COMMAND):
+        if len(message.attachments) < 1:
+            await client.send_message(message.channel, STRINGS['no_meme'] % message_sender)
+        elif len(message.attachments) > 1:
+            await client.send_message(message.channel, STRINGS['too_many_meme'] % message_sender)
+        else:
+            meme_name = message.content[len(NEW_MEME_COMMAND):].lower()
+            if meme_name in MEMES_LIST.keys():
+                await client.send_message(message.channel, STRINGS['meme_exists'] % message_sender)
+                return
+            if not VALID_MEME_REGEX.search(message.content) == None:
+                await client.send_message(message.channel, STRINGS['invalid_meme'] % message_sender)
+                return
+            MEMES_LIST[meme_name] = message.attachments[0]['url']
+            with open(MEMES_FILE, 'w') as f:
+                json.dump(MEMES_LIST, f)
+            f.close()
+            await client.send_message(message.channel, STRINGS['meme_submitted'] % message_sender)
+    elif CALL_MEME_REGEX.search(message.content):
+        requested_meme = CALL_MEME_REGEX.search(message.content).group(0)
+        try:
+            embeded = discord.Embed()
+            embeded.set_image(url = MEMES_LIST[requested_meme])
+            await client.send_message(message.channel, embed=embeded)
+            return
+        except:
+            print("no meme named " + requested_meme)
+            await client.send_message(message.channel, STRINGS['unknown_meme'] % message_sender)
+    elif message.content.startswith(LIST_MEMES_COMMAND):
+        the_memes = ""
+        for meme in MEMES_LIST.keys():
+            the_memes += meme + '\n'
+        await client.send_message(message.channel, (STRINGS['list_memes'] + the_memes) % message_sender)
+    elif message.content == HELP_COMMAND:
+        await client.send_message(message.channel, "%s you may use me any way you like" % message_sender)
 
-def reboot_self():
-  bot.change_presence(status = discord.Status.offline)
-  __soft_close()
-  python = sys.executable
-  sObserver.stop()
-  os.execl(python, python, *sys.argv)
-
-def __get_status_code(host, path="/"):
-  try:
-    connection = httplib2.Http()
-    response, content = connection.request(host + "/" + path, "HEAD")
-    return response.status
-  except StandardError:
-    return None
-
-def __soft_close():
-  for extension in tuple(bot.extensions):
-    try:
-      bot.unload_extension(extension)
-    except:
-      pass
-  for cog in tuple(bot.cogs):
-    try:
-      bot.remove_cog(cog)
-    except:
-      pass
-  return True
-
-bot.run(token)
+client.run(TOKEN)
