@@ -1,0 +1,46 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2017-12-31 19:15-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=cp1252\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: xvbot.py:42
+msgid "%s , you forgot to add the meme!"
+msgstr ""
+
+#: xvbot.py:44
+msgid "%s, meme overload! Please only submit one meme at a time!!!1"
+msgstr ""
+
+#: xvbot.py:48
+msgid "%s, that meme already exists. Try again."
+msgstr ""
+
+#: xvbot.py:51
+msgid "%s, that isn't a valid name for a meme..."
+msgstr ""
+
+#: xvbot.py:57
+msgid "%s, thank you for that tasty meme :3"
+msgstr ""
+
+#: xvbot.py:67
+msgid "%s, what?"
+msgstr ""
+
+#: xvbot.py:72
+msgid ""
+"%s, the memes are: \n"
+msgstr ""
+

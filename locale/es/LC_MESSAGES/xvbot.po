@@ -1,0 +1,46 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2017-12-31 19:15-0500\n"
+"PO-Revision-Date: 2017-12-31 19:26-0500\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.0.5\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es\n"
+
+#: xvbot.py:42
+msgid "%s , you forgot to add the meme!"
+msgstr "%s, usted se olvidó de añadir el meme!"
+
+#: xvbot.py:44
+msgid "%s, meme overload! Please only submit one meme at a time!!!1"
+msgstr "%s, sobrecarga de meme! Por favor sólo enviar un meme en un momento!!!!!!1"
+
+#: xvbot.py:48
+msgid "%s, that meme already exists. Try again."
+msgstr "%s, meme ya existe. Vuelve a intentarlo."
+
+#: xvbot.py:51
+msgid "%s, that isn't a valid name for a meme..."
+msgstr ""
+
+#: xvbot.py:57
+msgid "%s, thank you for that tasty meme :3"
+msgstr ""
+
+#: xvbot.py:67
+msgid "%s, what?"
+msgstr "¿%s, que?"
+
+#: xvbot.py:72
+msgid "%s, the memes are: \n"
+msgstr ""

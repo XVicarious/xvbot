@@ -1,9 +1,0 @@
-{
-"no_meme": "%s, you forgot to add a meme!",
-"too_many_meme": "%s, meme overload! Please only submit one meme at a time!!!!1",
-"meme_exists": "%s, that meme already exists. Try again.",
-"invalid_meme": "%s, that isn't a valid name for a meme...",
-"meme_submitted": "%s, thank you for that tasty meme :3",
-"unknown_meme": "%s, what?",
-"list_memes": "%s, the memes are: \n"
-}
