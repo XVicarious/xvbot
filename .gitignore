@@ -5,6 +5,8 @@ __pycache__/
 
 client.id.cfg
 
+memes.json
+
 # C extensions
 *.so
 

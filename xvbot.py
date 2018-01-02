@@ -17,7 +17,7 @@ def openMemes(filePath):
 
 client = discord.Client()
 
-TOKEN = ""
+TOKEN = open('client.id.cfg', 'r').readline().strip()
 
 NEW_MEME_COMMAND = "CHECK OUT THIS FRESH MEME CALLED "
 LIST_MEMES_COMMAND = "WHAT ARE THE MEMES?"
