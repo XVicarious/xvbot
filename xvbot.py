@@ -8,6 +8,8 @@ import gettext
 # todo: i18n support for this terrible bot
 es = gettext.translation('xvbot', localedir = 'locale', languages = ['es'])
 
+_ = lambda s: s
+
 def openMemes(filePath):
     if not filePath.exists():
         f = open(filePath, 'w+')
@@ -29,11 +31,20 @@ VALID_MEME_REGEX = re.compile(".*[.\\\\/:*?\"<>|].*")
 MEMES_FILE = Path("./memes.json")
 MEMES_LIST = openMemes(MEMES_FILE)
 
+TRIAL_FILE = Path("./trial.json")
 TRIAL_ONGOING = False
-TRIAL_FOR_MEME = {
-    "meme": "",
-    "date": 0
-}
+TRIAL_FOR_MEME = openMemes(TRIAL_FILE)
+
+async def list_memes(message, message_sender):
+    the_memes = ""
+    for meme in MEMES_LIST.keys():
+        the_memes += meme + '\n'
+    await client.send_message(message.channel, (_("%s, the memes are: \n") + the_memes) % message_sender)
+
+def dump_memes():
+    with open(MEMES_FILE, 'w') as f:
+        json.dump(MEMES_LIST, f)
+    f.close()
 
 @client.event
 async def on_ready():
@@ -58,26 +69,25 @@ async def on_message(message):
             if not VALID_MEME_REGEX.search(message.content) == None:
                 await client.send_message(message.channel, _("%s, that isn't a valid name for a meme...") % message_sender)
                 return
-            MEMES_LIST[meme_name] = message.attachments[0]['url']
-            with open(MEMES_FILE, 'w') as f:
-                json.dump(MEMES_LIST, f)
-            f.close()
+            MEMES_LIST[meme_name] = {}
+            MEMES_LIST[meme_name]['url'] = message.attachments[0]['url']
+            dump_memes()
             await client.send_message(message.channel, _("%s, thank you for that tasty meme :3") % message_sender)
     elif CALL_MEME_REGEX.search(message.content):
         requested_meme = CALL_MEME_REGEX.search(message.content).group(0)
         try:
             embeded = discord.Embed()
-            embeded.set_image(url = MEMES_LIST[requested_meme])
+            embeded.set_image(url = MEMES_LIST[requested_meme]['url'])
+            MEMES_LIST[requested_meme]["refs"] += 1
+            embeded.description = (_("This meme has been referenced %s times") % MEMES_LIST[requested_meme]["refs"])
             await client.send_message(message.channel, embed=embeded)
+            dump_memes()
             return
         except:
             print("no meme named " + requested_meme)
             await client.send_message(message.channel, _("%s, what?") % message_sender)
     elif message.content.startswith(LIST_MEMES_COMMAND):
-        the_memes = ""
-        for meme in MEMES_LIST.keys():
-            the_memes += meme + '\n'
-        await client.send_message(message.channel, (_("%s, the memes are: \n") + the_memes) % message_sender)
+        await list_memes(message, message_sender)
     elif message.content == HELP_COMMAND:
         await client.send_message(message.channel, "%s you may use me any way you like" % message_sender)
 
